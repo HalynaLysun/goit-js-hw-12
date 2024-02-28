@@ -1,4 +1,4 @@
-export function searchImages(value) {
+export async function searchImages(value, page) {
   const URI = 'https://pixabay.com/api/';
   const PARAMS = new URLSearchParams({
     key: '42515030-f0931f035bd772c998b8c15c1',
@@ -9,11 +9,13 @@ export function searchImages(value) {
   });
   const LINK = `${URI}?${PARAMS}`;
 
-  return fetch(LINK).then(response => {
-    if (!response.ok) {
-      throw new Error('Error!');
-    }
+  const response = await fetch(LINK);
 
-    return response.json();
-  });
+  try {
+    !response.ok;
+  } catch {
+    throw new Error('Error!');
+  }
+
+  return await response.json();
 }
