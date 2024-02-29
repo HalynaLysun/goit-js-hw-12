@@ -68,10 +68,10 @@ formEl.addEventListener('submit', event => {
 
         listEl.innerHTML = createMarkup(data.hits);
 
+        lightbox.refresh();
         if (data.hits.length >= 15) {
           buttonLoaderMore.classList.remove('is-hidden');
         }
-        lightbox.refresh();
       })
       .catch(error => {
         iziToast.error({
@@ -95,13 +95,31 @@ formEl.addEventListener('submit', event => {
 });
 
 buttonLoaderMore.addEventListener('click', () => {
-  // loaderMore.classList.remove('is-hidden');
+  buttonLoaderMore.classList.add('is-hidden');
+  loaderMore.classList.remove('is-hidden');
   page += 1;
-  searchImages(value, page).then(res => {
-    listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
-    lightbox.refresh();
-    // loaderMore.classList.add('is-hidden');
-  });
+  searchImages(value, page)
+    .then(res => {
+      listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
+      lightbox.refresh();
+      buttonLoaderMore.classList.remove('is-hidden');
+      loaderMore.scrollIntoView();
+      loaderMore.classList.add('is-hidden');
+    })
+    .catch(error => {
+      iziToast.error({
+        title: '',
+        message: 'Error while loading images!',
+        class: 'popup-message',
+        theme: 'dark',
+        backgroundColor: '#ef4040',
+        messageColor: '#fff',
+        iconUrl: cross,
+        position: 'topRight',
+        pauseOnHover: true,
+        timeout: 3000,
+      });
+    });
   // if (page > limit) {
   //   buttonLoaderMore.classList.add('is-hidden');
   // }
