@@ -1,8 +1,5 @@
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-
-export function showImages(images, gallery) {
-  gallery.innerHTML = images
+export function createMarkup(images) {
+  return images
     .map(
       img =>
         `<li>
@@ -28,10 +25,4 @@ export function showImages(images, gallery) {
                 </li>`
     )
     .join('');
-
-  const lightbox = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
-  lightbox.refresh();
 }
