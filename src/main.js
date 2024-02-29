@@ -22,9 +22,6 @@ let page = 1;
 
 let value;
 
-// let limit = 100;
-// const totalPages = Math.ceil(1000 / limit);
-
 formEl.addEventListener('submit', event => {
   event.preventDefault();
 
@@ -105,6 +102,24 @@ buttonLoaderMore.addEventListener('click', () => {
       buttonLoaderMore.classList.remove('is-hidden');
       loaderMore.scrollIntoView();
       loaderMore.classList.add('is-hidden');
+
+      // let totalImages = res.hits.length * page;
+      // if (totalImages > res.totalHits) {
+      //   buttonLoaderMore.classlist.add('is-hidden');
+      //   loaderMore.classList.add('is-hidden');
+      //   iziToast.error({
+      //     title: '',
+      //     message: 'This is all images!',
+      //     class: 'popup-message',
+      //     theme: 'dark',
+      //     backgroundColor: '#ef4040',
+      //     messageColor: '#fff',
+      //     iconUrl: cross,
+      //     position: 'topRight',
+      //     pauseOnHover: true,
+      //     timeout: 3000,
+      //   });
+      // }
     })
     .catch(error => {
       iziToast.error({
@@ -120,7 +135,4 @@ buttonLoaderMore.addEventListener('click', () => {
         timeout: 3000,
       });
     });
-  // if (page > limit) {
-  //   buttonLoaderMore.classList.add('is-hidden');
-  // }
 });
