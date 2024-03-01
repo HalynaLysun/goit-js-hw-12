@@ -27,7 +27,7 @@ formEl.addEventListener('submit', event => {
 
   listEl.innerHTML = '';
 
-  const value = event.currentTarget.image_name.value;
+  value = event.currentTarget.image_name.value;
 
   if (value.length === 0 || value.trim() === '') {
     iziToast.error({
@@ -44,8 +44,9 @@ formEl.addEventListener('submit', event => {
     });
   } else {
     loaderEl.classList.remove('is-hidden');
-    searchImages(value, page)
-      .then(data => {
+    async function fetchData() {
+      const data = await searchImages(value, page);
+      try {
         if (data.hits.length === 0) {
           buttonLoaderMore.classList.add('is-hidden');
           iziToast.error({
@@ -69,8 +70,7 @@ formEl.addEventListener('submit', event => {
         if (data.hits.length >= 15) {
           buttonLoaderMore.classList.remove('is-hidden');
         }
-      })
-      .catch(error => {
+      } catch {
         iziToast.error({
           title: '',
           message: 'Error while loading images!',
@@ -83,11 +83,12 @@ formEl.addEventListener('submit', event => {
           pauseOnHover: true,
           timeout: 3000,
         });
-      })
-      .finally(() => {
+      } finally {
         loaderEl.classList.add('is-hidden');
         formEl.reset();
-      });
+      }
+    }
+    fetchData();
   }
 });
 
@@ -95,33 +96,32 @@ buttonLoaderMore.addEventListener('click', () => {
   buttonLoaderMore.classList.add('is-hidden');
   loaderMore.classList.remove('is-hidden');
   page += 1;
-  searchImages(value, page)
-    .then(res => {
+  async function loadMoreImg() {
+    const res = await searchImages(value, page);
+    try {
+      let totalImages = res.hits.length * page;
+      if (totalImages > res.totalHits) {
+        buttonLoaderMore.classlist.add('is-hidden');
+        loaderMore.classList.add('is-hidden');
+        iziToast.error({
+          title: '',
+          message: 'This is all images!',
+          class: 'popup-message',
+          theme: 'dark',
+          backgroundColor: '#ef4040',
+          messageColor: '#fff',
+          iconUrl: cross,
+          position: 'topRight',
+          pauseOnHover: true,
+          timeout: 3000,
+        });
+      }
       listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
       lightbox.refresh();
       buttonLoaderMore.classList.remove('is-hidden');
       loaderMore.scrollIntoView();
       loaderMore.classList.add('is-hidden');
-
-      // let totalImages = res.hits.length * page;
-      // if (totalImages > res.totalHits) {
-      //   buttonLoaderMore.classlist.add('is-hidden');
-      //   loaderMore.classList.add('is-hidden');
-      //   iziToast.error({
-      //     title: '',
-      //     message: 'This is all images!',
-      //     class: 'popup-message',
-      //     theme: 'dark',
-      //     backgroundColor: '#ef4040',
-      //     messageColor: '#fff',
-      //     iconUrl: cross,
-      //     position: 'topRight',
-      //     pauseOnHover: true,
-      //     timeout: 3000,
-      //   });
-      // }
-    })
-    .catch(error => {
+    } catch {
       iziToast.error({
         title: '',
         message: 'Error while loading images!',
@@ -134,5 +134,7 @@ buttonLoaderMore.addEventListener('click', () => {
         pauseOnHover: true,
         timeout: 3000,
       });
-    });
+    }
+  }
+  loadMoreImg();
 });
