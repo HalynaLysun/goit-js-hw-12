@@ -99,7 +99,7 @@ buttonLoaderMore.addEventListener('click', () => {
   async function loadMoreImg() {
     const res = await searchImages(value, page);
     try {
-      let totalImages = res.hits.length * page;
+      const totalImages = res.hits.length * page;
       if (totalImages > res.totalHits) {
         buttonLoaderMore.classlist.add('is-hidden');
         loaderMore.classList.add('is-hidden');
