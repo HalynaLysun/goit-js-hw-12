@@ -45,8 +45,8 @@ formEl.addEventListener('submit', event => {
   } else {
     loaderEl.classList.remove('is-hidden');
     async function fetchData() {
-      const data = await searchImages(value, page);
       try {
+        const data = await searchImages(value, page);
         if (data.hits.length === 0) {
           buttonLoaderMore.classList.add('is-hidden');
           iziToast.error({
@@ -63,13 +63,7 @@ formEl.addEventListener('submit', event => {
             timeout: 3000,
           });
         }
-
-        listEl.innerHTML = createMarkup(data.hits);
-
-        lightbox.refresh();
-        if (data.hits.length >= 15) {
-          buttonLoaderMore.classList.remove('is-hidden');
-        }
+        return data;
       } catch {
         iziToast.error({
           title: '',
@@ -88,7 +82,14 @@ formEl.addEventListener('submit', event => {
         formEl.reset();
       }
     }
-    fetchData();
+    fetchData().then(data => {
+      listEl.innerHTML = createMarkup(data.hits);
+
+      lightbox.refresh();
+      if (data.hits.length >= 15) {
+        buttonLoaderMore.classList.remove('is-hidden');
+      }
+    });
   }
 });
 
@@ -97,8 +98,8 @@ buttonLoaderMore.addEventListener('click', () => {
   loaderMore.classList.remove('is-hidden');
   page += 1;
   async function loadMoreImg() {
-    const res = await searchImages(value, page);
     try {
+      const res = await searchImages(value, page);
       const totalImages = res.hits.length * page;
       if (totalImages > res.totalHits) {
         buttonLoaderMore.classlist.add('is-hidden');
@@ -116,11 +117,7 @@ buttonLoaderMore.addEventListener('click', () => {
           timeout: 3000,
         });
       }
-      listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
-      lightbox.refresh();
-      buttonLoaderMore.classList.remove('is-hidden');
-      loaderMore.scrollIntoView();
-      loaderMore.classList.add('is-hidden');
+      return res;
     } catch {
       iziToast.error({
         title: '',
@@ -136,5 +133,11 @@ buttonLoaderMore.addEventListener('click', () => {
       });
     }
   }
-  loadMoreImg();
+  loadMoreImg().then(res => {
+    listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
+    lightbox.refresh();
+    buttonLoaderMore.classList.remove('is-hidden');
+    loaderMore.scrollIntoView();
+    loaderMore.classList.add('is-hidden');
+  });
 });
