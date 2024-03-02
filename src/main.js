@@ -65,9 +65,10 @@ formEl.addEventListener('submit', event => {
         }
         return data;
       } catch {
+        buttonLoaderMore.classList.add('is-hidden');
         iziToast.error({
           title: '',
-          message: 'Error while loading images!',
+          message: 'Something went wrong. Please try later',
           class: 'popup-message',
           theme: 'dark',
           backgroundColor: '#ef4040',
