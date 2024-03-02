@@ -24,7 +24,7 @@ let value;
 
 formEl.addEventListener('submit', event => {
   event.preventDefault();
-
+  page = 1;
   listEl.innerHTML = '';
 
   value = event.currentTarget.image_name.value;
@@ -93,35 +93,27 @@ formEl.addEventListener('submit', event => {
   }
 });
 
-buttonLoaderMore.addEventListener('click', () => {
+buttonLoaderMore.addEventListener('click', loadMoreImg);
+
+async function loadMoreImg() {
   buttonLoaderMore.classList.add('is-hidden');
   loaderMore.classList.remove('is-hidden');
   page += 1;
-  async function loadMoreImg() {
-    try {
-      const res = await searchImages(value, page);
-      const totalImages = res.hits.length * page;
-      if (totalImages > res.totalHits) {
-        buttonLoaderMore.classlist.add('is-hidden');
-        loaderMore.classList.add('is-hidden');
-        iziToast.error({
-          title: '',
-          message: 'This is all images!',
-          class: 'popup-message',
-          theme: 'dark',
-          backgroundColor: '#ef4040',
-          messageColor: '#fff',
-          iconUrl: cross,
-          position: 'topRight',
-          pauseOnHover: true,
-          timeout: 3000,
-        });
-      }
-      return res;
-    } catch {
+  try {
+    const res = await searchImages(value, page);
+
+    listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
+    lightbox.refresh();
+    buttonLoaderMore.classList.remove('is-hidden');
+    loaderMore.scrollIntoView();
+    loaderMore.classList.add('is-hidden');
+    console.log(res.hits.length);
+    if (res.hits.length < 15) {
+      buttonLoaderMore.classlist.add('is-hidden');
+      loaderMore.classList.add('is-hidden');
       iziToast.error({
         title: '',
-        message: 'Error while loading images!',
+        message: 'This is all images!',
         class: 'popup-message',
         theme: 'dark',
         backgroundColor: '#ef4040',
@@ -132,12 +124,18 @@ buttonLoaderMore.addEventListener('click', () => {
         timeout: 3000,
       });
     }
+  } catch {
+    iziToast.error({
+      title: '',
+      message: 'Error while loading images!',
+      class: 'popup-message',
+      theme: 'dark',
+      backgroundColor: '#ef4040',
+      messageColor: '#fff',
+      iconUrl: cross,
+      position: 'topRight',
+      pauseOnHover: true,
+      timeout: 3000,
+    });
   }
-  loadMoreImg().then(res => {
-    listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
-    lightbox.refresh();
-    buttonLoaderMore.classList.remove('is-hidden');
-    loaderMore.scrollIntoView();
-    loaderMore.classList.add('is-hidden');
-  });
-});
+}
