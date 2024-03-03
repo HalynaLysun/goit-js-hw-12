@@ -108,8 +108,8 @@ async function loadMoreImg() {
     buttonLoaderMore.classList.remove('is-hidden');
     loaderMore.scrollIntoView();
     loaderMore.classList.add('is-hidden');
-    console.log(res.hits.length);
-    if (res.hits.length < 15) {
+    const totalImages = page * 15;
+    if (totalImages < res.totalHits) {
       buttonLoaderMore.classList.add('is-hidden');
       loaderMore.classList.add('is-hidden');
       iziToast.error({
