@@ -30,6 +30,7 @@ formEl.addEventListener('submit', event => {
   value = event.currentTarget.image_name.value;
 
   if (value.length === 0 || value.trim() === '') {
+    buttonLoaderMore.classList.add('is-hidden');
     iziToast.error({
       title: '',
       message: 'Could you, please choose some type of photos',
@@ -64,11 +65,10 @@ formEl.addEventListener('submit', event => {
           });
         }
         return data;
-      } catch {
-        buttonLoaderMore.classList.add('is-hidden');
+      } catch (error) {
         iziToast.error({
           title: '',
-          message: 'Something went wrong. Please try later',
+          message: `${error.message}`,
           class: 'popup-message',
           theme: 'dark',
           backgroundColor: '#ef4040',
@@ -97,10 +97,10 @@ formEl.addEventListener('submit', event => {
 buttonLoaderMore.addEventListener('click', loadMoreImg);
 
 async function loadMoreImg() {
-  buttonLoaderMore.classList.add('is-hidden');
-  loaderMore.classList.remove('is-hidden');
-  page += 1;
   try {
+    buttonLoaderMore.classList.add('is-hidden');
+    loaderMore.classList.remove('is-hidden');
+    page += 1;
     const res = await searchImages(value, page);
 
     listEl.insertAdjacentHTML('beforeend', createMarkup(res.hits));
@@ -110,11 +110,11 @@ async function loadMoreImg() {
     loaderMore.classList.add('is-hidden');
     console.log(res.hits.length);
     if (res.hits.length < 15) {
-      buttonLoaderMore.classlist.add('is-hidden');
+      buttonLoaderMore.classList.add('is-hidden');
       loaderMore.classList.add('is-hidden');
       iziToast.error({
         title: '',
-        message: 'This is all images!',
+        message: 'Sorry! This is all images!',
         class: 'popup-message',
         theme: 'dark',
         backgroundColor: '#ef4040',
@@ -125,10 +125,10 @@ async function loadMoreImg() {
         timeout: 3000,
       });
     }
-  } catch {
+  } catch (error) {
     iziToast.error({
       title: '',
-      message: 'Error while loading images!',
+      message: `${error.message}`,
       class: 'popup-message',
       theme: 'dark',
       backgroundColor: '#ef4040',
