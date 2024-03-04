@@ -64,8 +64,10 @@ formEl.addEventListener('submit', event => {
             timeout: 3000,
           });
         }
+        console.log(data);
         return data;
       } catch (error) {
+        buttonLoaderMore.classList.add('is-hidden');
         iziToast.error({
           title: '',
           message: `${error.message}`,
@@ -84,6 +86,7 @@ formEl.addEventListener('submit', event => {
       }
     }
     fetchData().then(data => {
+      console.log(data);
       listEl.innerHTML = createMarkup(data.hits);
 
       lightbox.refresh();
@@ -108,8 +111,8 @@ async function loadMoreImg() {
     buttonLoaderMore.classList.remove('is-hidden');
     loaderMore.scrollIntoView();
     loaderMore.classList.add('is-hidden');
-    const totalImages = page * 15;
-    if (totalImages < res.totalHits) {
+
+    if (res.hits.length < 15) {
       buttonLoaderMore.classList.add('is-hidden');
       loaderMore.classList.add('is-hidden');
       iziToast.error({
@@ -126,6 +129,7 @@ async function loadMoreImg() {
       });
     }
   } catch (error) {
+    buttonLoaderMore.classList.add('is-hidden');
     iziToast.error({
       title: '',
       message: `${error.message}`,
